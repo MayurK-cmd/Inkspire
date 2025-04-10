@@ -5,7 +5,7 @@ const { router: authRoutes, authenticate } = require("./auth");
 const blogRoutes = require("./blog");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
-
+const profileRoutes = require("./profile");
 
 dotenv.config();
 const app = express();
@@ -36,6 +36,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.listen(3000, () => {
   console.log("Server running on http://localhost:3000");
