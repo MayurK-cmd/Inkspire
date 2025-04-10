@@ -9,12 +9,55 @@ const prisma = new PrismaClient();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
-// Signup
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: User authentication and management
+ */
+
+/**
+ * @swagger
+ * /auth/signup:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - username
+ *               - firstname
+ *               - lastname
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               firstname:
+ *                 type: string
+ *               lastname:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Email or username already exists
+ */
 router.post("/signup", async (req, res) => {
   const { email, username, firstname, lastname, password } = req.body;
 
   if (!email || !username || !firstname || !lastname || !password) {
-    return res.status(400).json({ message: "Email, username, first name, last name, and password are required" });
+    return res.status(400).json({
+      message: "Email, username, first name, last name, and password are required",
+    });
   }
 
   try {
@@ -47,7 +90,32 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Login
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Invalid credentials
+ */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -66,7 +134,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Middleware for Authentication
+// Auth middleware
 const authenticate = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) return res.status(401).json({ message: "Access Denied" });
@@ -80,7 +148,6 @@ const authenticate = (req, res, next) => {
 };
 
 module.exports = {
-    router,
-    authenticate
-  };
-  
+  router,
+  authenticate,
+};

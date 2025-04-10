@@ -1,11 +1,49 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
-const { authenticate } = require("./auth"); // assumes you have an auth middleware
+const { authenticate } = require("./auth");
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Create a blog post
+/**
+ * @swagger
+ * tags:
+ *   name: Blog
+ *   description: Blog post management
+ */
+
+/**
+ * @swagger
+ * /blog:
+ *   post:
+ *     summary: Create a new blog post
+ *     tags: [Blog]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - content
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               published:
+ *                 type: boolean
+ *               categoryId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Post created successfully
+ *       500:
+ *         description: Error creating post
+ */
 router.post("/", authenticate, async (req, res) => {
   const { title, content, categoryId, published } = req.body;
 
@@ -25,7 +63,24 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// Get all posts (optionally filter by published)
+/**
+ * @swagger
+ * /blog:
+ *   get:
+ *     summary: Get all blog posts (optionally filter by published status)
+ *     tags: [Blog]
+ *     parameters:
+ *       - in: query
+ *         name: published
+ *         schema:
+ *           type: boolean
+ *         description: Filter by published status
+ *     responses:
+ *       200:
+ *         description: List of blog posts
+ *       500:
+ *         description: Error fetching posts
+ */
 router.get("/", async (req, res) => {
   const { published } = req.query;
 
@@ -44,7 +99,26 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get a single post
+/**
+ * @swagger
+ * /blog/{id}:
+ *   get:
+ *     summary: Get a single blog post by ID
+ *     tags: [Blog]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Blog post data
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Error fetching post
+ */
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -70,7 +144,43 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Update a post
+/**
+ * @swagger
+ * /blog/{id}:
+ *   put:
+ *     summary: Update a blog post
+ *     tags: [Blog]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               published:
+ *                 type: boolean
+ *               categoryId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Post updated
+ *       403:
+ *         description: Not authorized
+ *       500:
+ *         description: Error updating post
+ */
 router.put("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
   const { title, content, categoryId, published } = req.body;
@@ -98,7 +208,28 @@ router.put("/:id", authenticate, async (req, res) => {
   }
 });
 
-// Delete a post
+/**
+ * @swagger
+ * /blog/{id}:
+ *   delete:
+ *     summary: Delete a blog post
+ *     tags: [Blog]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post deleted
+ *       403:
+ *         description: Not authorized
+ *       500:
+ *         description: Error deleting post
+ */
 router.delete("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
 

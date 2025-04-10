@@ -3,10 +3,34 @@ const { PrismaClient } = require("@prisma/client");
 const dotenv = require("dotenv");
 const { router: authRoutes, authenticate } = require("./auth");
 const blogRoutes = require("./blog");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
 
 dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
+
+const swaggerOptions = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "Blog API",
+        version: "1.0.0",
+        description: "API documentation for the blog-site backend",
+      },
+      servers: [
+        {
+          url: "http://localhost:3000/api",
+        },
+      ],
+    },
+    apis: ["./*.js"], // path to files with Swagger annotations
+  };
+  
+  const swaggerSpec = swaggerJsdoc(swaggerOptions);
+  
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
 
