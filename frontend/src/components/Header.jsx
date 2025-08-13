@@ -14,16 +14,18 @@ const Header = () => {
           </svg>
         </div>
         <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-          Blogify
+          Inkspire
         </h2>
       </div>
 
       {/* Navigation */}
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-9">
-          <Link to="/home" className="text-white text-sm font-medium leading-normal">
-            Home
-          </Link>
+          {user && (
+            <Link to="/home" className="text-white text-sm font-medium leading-normal">
+              Home
+            </Link>
+          )}
           {user ? (
             <>
               <Link to="/create" className="text-white text-sm font-medium leading-normal">

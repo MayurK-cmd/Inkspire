@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -14,10 +14,13 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 const App = () => {
+  const location = useLocation();
+  const showFooter = location.pathname === '/'; // show only on landing page
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#111714] text-white ">
+    <div className="min-h-screen flex flex-col bg-[#111714] text-white">
       <Header />
-      
+
       <main className="flex-grow flex items-center justify-center px-4">
         <div className="w-full max-w-4xl">
           <Routes>
@@ -34,7 +37,7 @@ const App = () => {
         </div>
       </main>
 
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 };

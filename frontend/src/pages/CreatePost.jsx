@@ -1,42 +1,77 @@
-import { useState } from 'react';
-import axios from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import axios from "../services/api";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const CreatePost = () => {
+export default function CreatePost() {
   const { token } = useAuth();
-  const [form, setForm] = useState({ title: '', content: '', published: true });
   const navigate = useNavigate();
 
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    published: true,
+  });
+
   const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/blogs', form, {
+      await axios.post("/api/blogs", form, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      alert('Failed to create post');
+      alert("Failed to create post");
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-6">
-      <h1 className="text-2xl font-bold mb-4">Create Post</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="title" placeholder="Title" onChange={handleChange}
-          className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600" required />
-        <textarea name="content" placeholder="Content" rows="8" onChange={handleChange}
-          className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600" required />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+    <div
+      className="flex items-center justify-center min-h-screen bg-[#111714] overflow-x-hidden"
+      style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col w-full max-w-4xl p-6"
+      >
+        <h2 className="text-white text-[28px] font-bold leading-tight text-center mb-6">
+          Create a new post
+        </h2>
+
+        {/* Title Input */}
+        <input
+          name="title"
+          placeholder="Title"
+          className="form-input w-full resize-none rounded-lg text-white focus:outline-none border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base font-normal mb-4"
+          value={form.title}
+          onChange={handleChange}
+          required
+        />
+
+        {/* Content Input */}
+        <textarea
+          name="content"
+          placeholder="Content"
+          className="form-input w-full resize-none rounded-lg text-white focus:outline-none border-none bg-[#29382f] min-h-[50vh] placeholder:text-[#9eb7a8] p-4 text-base font-normal mb-6"
+          value={form.content}
+          onChange={handleChange}
+          required
+        ></textarea>
+
+        {/* Publish Button */}
+        <button
+          type="submit"
+          className="w-full h-12 bg-[#38e07b] text-[#111714] text-sm font-bold rounded-lg"
+        >
           Publish
         </button>
       </form>
     </div>
   );
-};
-
-export default CreatePost;
+}

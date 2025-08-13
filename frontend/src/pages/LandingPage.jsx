@@ -24,7 +24,7 @@ const Landing = () => {
         className="flex min-h-screen items-center justify-center flex-col bg-[#111714] text-center px-6"
         style={{ fontFamily: 'Inter, Noto Sans, sans-serif' }}
       >
-        <h1 className="text-white text-4xl font-bold mb-4">Welcome to My Blog</h1>
+        <h1 className="text-white text-4xl font-bold mb-4">Welcome to Inkspire!</h1>
         <p className="text-[#9eb7a8] max-w-lg mb-6">
           Discover amazing articles, insights, and stories from our community.
           Sign up or log in to start reading and sharing your own posts.
