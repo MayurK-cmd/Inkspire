@@ -39,6 +39,11 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use(cors({
+  origin: 'https://inkspire-dun.vercel.app/', 
+  credentials: true,
+}));
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
