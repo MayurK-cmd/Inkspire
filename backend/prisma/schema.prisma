@@ -23,6 +23,8 @@ model User {
   lastname  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  resetToken       String?   
+  resetTokenExpiry DateTime?
 
   posts     Post[]
   comments  Comment[]

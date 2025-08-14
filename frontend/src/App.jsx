@@ -8,6 +8,10 @@ import PostDetail from './pages/PostDetail';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Landing from './pages/LandingPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import CheckEmail from './pages/CheckEmail';
+import ResetSuccess from './pages/ResetSuccess';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/Header';
@@ -28,6 +32,10 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/reset-success" element={<ResetSuccess />} />
             <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

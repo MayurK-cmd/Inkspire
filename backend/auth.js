@@ -3,54 +3,15 @@ const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 const prisma = new PrismaClient();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
-/**
- * @swagger
- * tags:
- *   name: Auth
- *   description: User authentication and management
- */
 
-/**
- * @swagger
- * /auth/signup:
- *   post:
- *     summary: Create a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - username
- *               - firstname
- *               - lastname
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               username:
- *                 type: string
- *               firstname:
- *                 type: string
- *               lastname:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       201:
- *         description: User created successfully
- *       400:
- *         description: Email or username already exists
- */
 router.post("/signup", async (req, res) => {
   const { email, username, firstname, lastname, password } = req.body;
 
@@ -90,32 +51,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /auth/login:
- *   post:
- *     summary: Login a user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Login successful
- *       400:
- *         description: Invalid credentials
- */
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -146,6 +82,86 @@ const authenticate = (req, res, next) => {
     res.status(400).json({ message: "Invalid Token" });
   }
 };
+
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ message: "User with this email does not exist" });
+    }
+
+    // Generate token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+
+    await prisma.user.update({
+      where: { email },
+      data: {
+        resetToken,
+        resetTokenExpiry,
+      },
+    });
+
+    // Send email
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // or SMTP config
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const resetLink = `https://inkspire-dun.vercel.app//reset-password/${resetToken}`;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset Request",
+      text: `Click the link to reset your password: ${resetLink}`,
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password</p>`,
+    });
+
+    res.json({ message: "Password reset link sent to your email" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: token,
+        resetTokenExpiry: { gt: new Date() }, // token still valid
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    res.json({ message: "Password has been reset successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 
 module.exports = {
   router,

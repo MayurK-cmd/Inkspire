@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { EyeIcon, EyeOffIcon } from "lucide-react"; // 👈 for eye toggle
 
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 👈 toggle state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -52,21 +54,28 @@ const Login = () => {
               />
             </div>
 
-            {/* Password */}
-            <div className="w-full flex flex-col items-center px-4 py-3">
+            {/* Password with Eye Toggle */}
+            <div className="w-full flex flex-col items-center px-4 py-3 relative">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="flex w-full max-w-[480px] rounded-lg text-white border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none"
+                className="flex w-full max-w-[480px] rounded-lg text-white border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none pr-10"
               />
+              <button
+                type="button"
+                className="absolute right-7 top-1/2 -translate-y-1/2 text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+              </button>
             </div>
 
             <p className="text-[#9eb7a8] text-sm px-4 underline cursor-pointer text-center">
-              Forgot password?
+              <Link to="/forgot-password">Forgot password?</Link>
             </p>
 
             {/* Login Button */}

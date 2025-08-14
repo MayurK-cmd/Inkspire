@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeOffIcon } from "lucide-react"; // 👈 for eye toggle
 
 const Signup = () => {
   const { signup } = useAuth();
@@ -13,6 +14,7 @@ const Signup = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 toggle state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,7 +37,6 @@ const Signup = () => {
     >
       {/* Content */}
       <div className="flex flex-1 items-center justify-center px-4 py-10">
-        {/* Centered, fixed max width container */}
         <div className="w-full max-w-[480px]">
           <h2 className="text-white tracking-light text-[28px] font-bold leading-tight text-center pb-3 pt-5">
             Create your account
@@ -46,75 +47,72 @@ const Signup = () => {
           )}
 
           <form onSubmit={handleSubmit} className="mt-2">
-            {/* First & Last Name in two columns on sm+ */}
+            {/* First & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-0 py-3">
-              <label className="flex flex-col">
-                <input
-                  name="firstname"
-                  placeholder="First name"
-                  value={form.firstname}
-                  onChange={handleChange}
-                  required
-                  className="form-input w-full overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base"
-                />
-              </label>
-              <label className="flex flex-col">
-                <input
-                  name="lastname"
-                  placeholder="Last name"
-                  value={form.lastname}
-                  onChange={handleChange}
-                  required
-                  className="form-input w-full overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base"
-                />
-              </label>
+              <input
+                name="firstname"
+                placeholder="First name"
+                value={form.firstname}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg text-white bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none"
+              />
+              <input
+                name="lastname"
+                placeholder="Last name"
+                value={form.lastname}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg text-white bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none"
+              />
             </div>
 
             {/* Username */}
             <div className="px-0 py-3">
-              <label className="flex flex-col">
-                <input
-                  name="username"
-                  placeholder="Username"
-                  value={form.username}
-                  onChange={handleChange}
-                  required
-                  className="form-input w-full overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base"
-                />
-              </label>
+              <input
+                name="username"
+                placeholder="Username"
+                value={form.username}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg text-white bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none"
+              />
             </div>
 
             {/* Email */}
             <div className="px-0 py-3">
-              <label className="flex flex-col">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  className="form-input w-full overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base"
-                />
-              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg text-white bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base focus:outline-none"
+              />
             </div>
 
-            {/* Password */}
-            <div className="px-0 py-3">
-              <label className="flex flex-col">
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                  className="form-input w-full overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base"
-                />
-              </label>
+            {/* Password with Eye Toggle */}
+            <div className="px-0 py-3 relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
+                className="w-full rounded-lg text-white bg-[#29382f] h-14 placeholder:text-[#9eb7a8] p-4 text-base pr-10 focus:outline-none"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+              </button>
             </div>
 
-            {/* Sign Up Button — full width to match fields */}
+            {/* Sign Up Button */}
             <div className="px-0 py-3">
               <button
                 type="submit"
