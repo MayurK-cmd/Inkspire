@@ -40,7 +40,7 @@ app.use(express.json());
 // }));
 
 app.use(cors({
-  origin: 'https://inkspire-dun.vercel.app/', 
+  origin: 'https://inkspire-dun.vercel.app', 
   credentials: true,
 }));
 
