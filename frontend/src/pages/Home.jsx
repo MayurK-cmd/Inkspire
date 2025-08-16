@@ -1,25 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "../services/api";
-import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
-  const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    if (currentUser) {
-      axios
-        .get("/api/blogs?published=true")
-        .then((res) => setPosts(res.data))
-        .catch(console.error);
-    }
-  }, [currentUser]);
+    axios
+      .get("/api/blogs") // ✅ directly fetch blogs (no auth required)
+      .then((res) => setPosts(res.data))
+      .catch((err) => console.error("Error fetching blogs:", err));
+  }, []);
 
   return (
     <div
       className="flex min-h-screen flex-col bg-[#111714] overflow-x-hidden"
-      style={{ fontFamily: 'Inter, Noto Sans, sans-serif' }}
+      style={{ fontFamily: "Inter, Noto Sans, sans-serif" }}
     >
       <div className="flex-1 flex flex-col px-40 py-10">
         <h1 className="text-white text-[28px] font-bold mb-6">Recent Posts</h1>
@@ -38,7 +34,7 @@ const Home = () => {
                   {post.title}
                 </Link>
                 <p className="text-[#9eb7a8] mt-1">
-                  By {post.author.firstname} {post.author.lastname}
+                  By {post.author?.firstname} {post.author?.lastname}
                 </p>
               </div>
             ))

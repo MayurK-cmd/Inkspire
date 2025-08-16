@@ -248,4 +248,26 @@ router.delete("/:id", authenticate, async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const blogs = await prisma.blog.findMany({
+      take: 5, // show only 5 blogs on homepage
+      orderBy: { createdAt: "desc" }, // latest first
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: { id: true, username: true }, // show basic author info
+        },
+      },
+    });
+
+    res.json(blogs);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 module.exports = router;
